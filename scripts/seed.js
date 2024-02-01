@@ -1,10 +1,12 @@
 const { db } = require('@vercel/postgres');
+
 const {
     invoices,
     customers,
     revenue,
     users,
 } = require('../app/lib/placeholder-data.js');
+
 const bcrypt = require('bcrypt');
 
 async function seedUsers(client) {
@@ -12,7 +14,7 @@ async function seedUsers(client) {
         await client.sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
         // Create the "users" table if it doesn't exist
         const createTable = await client.sql`
-      CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS users (
         id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email TEXT NOT NULL UNIQUE,
