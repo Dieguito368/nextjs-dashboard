@@ -60,17 +60,21 @@ const createInvoice = async (prevState: State, formData: FormData) => {
     redirect('/dashboard/invoices');
 }
 
-const updateInvoice = async (id: string, formData: FormData) => {
-    const { customerID, amount, status } = UpdateInvoice.parse({
-        customerID: formData.get('customerId'),
+const updateInvoice = async (id: string, prevState: State, formData: FormData) => {
+    const validateFields = UpdateInvoice.safeParse({
+        customerID : formData.get('customerId'),
         amount: formData.get('amount'),
-        status: formData.get('status')
+        status: formData.get('status') 
     });
 
+    if(!validateFields.success) {
+        return { errors: validateFields.error.flatten().fieldErrors, message: 'Mising Fields. Failed to Update Invoice' }
+    }
+
+    const { customerID, amount, status } = validateFields.data;
     const amountInCents = amount * 100;
 
     try {
-
         await sql` 
             UPDATE invoices
             SET customer_id = ${customerID}, amount = ${amountInCents}, status = ${status}
